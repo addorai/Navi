@@ -1,11 +1,9 @@
 #! /usr/bin/env node
 import {spawn, ChildProcessWithoutNullStreams} from "child_process";
-import OpenAI from "openai";
+import NaviUtils from "./utils";
 
-const openai = new OpenAI();
+const naviUtls = new NaviUtils();
 const {Command} = require("commander");
-const fs = require("fs");
-const path = require("path");
 const figlet = require("figlet");
 const program = new Command();
 
@@ -61,21 +59,11 @@ function manualDebug(command: string[]) {
 
     // Listen for close event
     childProcess.on("close", (code) => {
-      getSolution(errorData);
+      naviUtls.fetchGptResults(errorData);
       // console.log(`child process exited with code ${code}`);
       // process.exit(code || 0);
     });
   }
-}
-
-async function getSolution(error: string) {
-  console.log("error data", error);
-  const completion = await openai.chat.completions.create({
-    messages: [{role: "system", content: "I'm getting this error when running a node app: " + error}],
-    model: "gpt-3.5-turbo",
-  });
-
-  console.log(completion.choices[0]);
 }
 
 if (options.debug) {
@@ -85,5 +73,3 @@ if (options.debug) {
 if (!process.argv.slice(2).length) {
   program.outputHelp();
 }
-
-liveDebug();

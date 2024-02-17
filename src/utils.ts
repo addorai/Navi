@@ -24,7 +24,7 @@ class NaviUtils {
 
   private promptApiKey() {
     const apiKeyPath = path.join(__dirname, "navi.txt");
-    
+
     const userInputApiKey = readlineSync.question("Enter your API key: ", {
       hideEchoBack: true,
     });
@@ -42,7 +42,7 @@ class NaviUtils {
     if (apiKey) {
       const spinner = this.startSpinner("Fetching answers from our AI overlords");
       const completion = await this.openai.chat.completions.create({
-        messages: [{ role: "system", content: "I'm getting this error when running a node app: " + error }],
+        messages: [{role: "system", content: "I'm getting this error when running a node app: " + error}],
         model: "gpt-3.5-turbo",
       });
       this.stopSpinner(spinner);
@@ -56,12 +56,12 @@ class NaviUtils {
     if (!output) {
       return console.log("No output from GPT-3.5-turbo");
     }
-    console.log(figlet.textSync(output));
+    console.log(output);
   }
 
   // SPINNER
   private startSpinner(message: string) {
-    const spinnerChars = ['-', '\\', '|', '/'];
+    const spinnerChars = ["-", "\\", "|", "/"];
     let index = 0;
     return setInterval(() => {
       process.stdout.write(`\r${spinnerChars[index]} ${message}`);
