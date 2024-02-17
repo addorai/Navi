@@ -1,11 +1,12 @@
 #! /usr/bin/env node
 import {spawn, ChildProcessWithoutNullStreams} from "child_process";
+import OpenAI from "openai";
 
+const openai = new OpenAI();
 const {Command} = require("commander");
 const fs = require("fs");
 const path = require("path");
 const figlet = require("figlet");
-
 const program = new Command();
 
 console.log(figlet.textSync("Navi"));
@@ -45,6 +46,7 @@ function manualDebug(command: string[]) {
   // Spawn the command as a child process
   if (cmd) {
     const childProcess: ChildProcessWithoutNullStreams = spawn(cmd, args, {shell: true});
+    let errorData = "";
 
     // Listen for stdout data event
     childProcess.stdout.on("data", (data) => {
@@ -54,14 +56,26 @@ function manualDebug(command: string[]) {
     // Listen for stderr data event
     childProcess.stderr.on("data", (data) => {
       console.error(`stderr: ${data}`);
+      errorData += data;
     });
 
     // Listen for close event
     childProcess.on("close", (code) => {
-      console.log(`child process exited with code ${code}`);
-      process.exit(code || 0);
+      getSolution(errorData);
+      // console.log(`child process exited with code ${code}`);
+      // process.exit(code || 0);
     });
   }
+}
+
+async function getSolution(error: string) {
+  console.log("error data", error);
+  const completion = await openai.chat.completions.create({
+    messages: [{role: "system", content: "I'm getting this error when running a node app: " + error}],
+    model: "gpt-3.5-turbo",
+  });
+
+  console.log(completion.choices[0]);
 }
 
 if (options.debug) {
