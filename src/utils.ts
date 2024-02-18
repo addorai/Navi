@@ -1,4 +1,3 @@
-import figlet from "figlet";
 import fs from "fs";
 import path from "path";
 import readlineSync from "readline-sync";

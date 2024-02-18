@@ -38,8 +38,9 @@ function manualDebug(command: string[]) {
     childProcess.on("close", (code) => {
       if (errorData.length > 0) {
         naviUtils.fetchGptResults(errorData);
+      } else {
+        process.exit(code || 0);
       }
-      process.exit(code || 0);
     });
   }
 }
