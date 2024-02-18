@@ -25,7 +25,12 @@ function manualDebug(command: string[]) {
 
     // Listen for stdout data event
     childProcess.stdout.on("data", (data) => {
-      console.log(`${data}`);
+      if (data.includes("error")) {
+        console.error(`${chalk.red(data)}`);
+        errorData += data;
+      } else {
+        console.log(`${data}`);
+      }
     });
 
     // Listen for stderr data event
