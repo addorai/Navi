@@ -6,9 +6,5 @@ Navi is an AI copilot that automatically debugs errors in the terminal
 
 You have two options on how to get suggestions from Navi
 
-1. (Recommended) Add navi to your build script: `[YOUR_BUILD_COMMAND] 2> >(awk '{print "ERROR:", $0; fflush();}') > >(awk '{print}') | navi -d`
+1. (Recommended) Add navi to your scripts in package.json: `"debug": "navi -d [YOUR_BUILD_COMMAND]"`, then run `npm run debug`
 2. After you get a failed command, run `navi -d [YOUR_BUILD_COMMAND]`
-
-(AD) TO-DOs
-
-- If error is detected, hit OpenAI endpoint and get results back

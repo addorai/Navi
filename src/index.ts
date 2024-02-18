@@ -13,29 +13,6 @@ program.version("1.0.0").description("A CLI tool that uses AI to debug terminal 
 
 const options = program.opts();
 
-function liveDebug() {
-  process.stdin.setEncoding("utf8");
-
-  let inputData = "";
-  let errorData = "";
-
-  process.stdin.on("data", (chunk) => {
-    // Accumulate the input data
-    inputData += chunk;
-    if (chunk.toString().startsWith("ERROR:")) {
-      errorData += chunk;
-    }
-  });
-
-  process.stdin.on("end", () => {
-    // Process the complete input data
-    console.log(inputData);
-    if (errorData.length > 0) {
-      console.log(chalk.red(errorData));
-    }
-  });
-}
-
 function manualDebug(command: string[]) {
   // Split the command and its arguments into an array
   const cmd = command.shift();
@@ -62,6 +39,7 @@ function manualDebug(command: string[]) {
       if (errorData.length > 0) {
         naviUtils.fetchGptResults(errorData);
       }
+      process.exit(code || 0);
     });
   }
 }
