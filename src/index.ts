@@ -36,8 +36,14 @@ function manualDebug(command: string[]) {
 
     // Listen for stderr data event
     childProcess.stderr.on("data", async (data) => {
-      console.error(`${chalk.red(data)}`);
-      errorData += data;
+      // warnings are not processed by chatGPT
+      if (data.toString().includes("npm WARN")) {
+        console.warn(`${chalk.yellow(data)}`);
+      } else {
+        console.error(`${chalk.red(data)}`);
+        errorData += data;
+      }
+
       // Only send request to chatGPT if we haven't already sent a request for the error
       // Sending requests here enables us to debug runtime errors
       if (errorData.length > lastGptErrMessage.length) {
