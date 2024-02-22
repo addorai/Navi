@@ -154,7 +154,7 @@ class NaviUtils {
       return fileContent; // Return the file contents
     } catch (err) {
       console.error("Error reading file:", err);
-      throw err; // Rethrow the error to propagate it
+      return "";
     }
   }
 }

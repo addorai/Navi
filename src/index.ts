@@ -13,6 +13,8 @@ program.version("1.0.0").description("A CLI tool that uses AI to debug terminal 
 
 const options = program.opts();
 
+let debounceTimer: NodeJS.Timeout | null = null;
+
 function manualDebug(command: string[]) {
   // Split the command and its arguments into an array
   const cmd = command.shift();
@@ -37,28 +39,38 @@ function manualDebug(command: string[]) {
     // Listen for stderr data event
     childProcess.stderr.on("data", async (data) => {
       // warnings are not processed by chatGPT
-      if (data.toString().includes("npm WARN")) {
+      if (data.toString().toLowerCase().includes("warn")) {
         console.warn(`${chalk.yellow(data)}`);
       } else {
         console.error(`${chalk.red(data)}`);
         errorData += data;
       }
 
-      // Only send request to chatGPT if we haven't already sent a request for the error
-      // Sending requests here enables us to debug runtime errors
-      if (errorData.length > lastGptErrMessage.length) {
-        lastGptErrMessage = errorData;
-        await naviUtils.fetchGptResults(errorData); // to debug runtime errors
-      }
+      deboucedGptResults(errorData, lastGptErrMessage);
     });
 
     // Listen for close event
     childProcess.on("close", async (code) => {
-      if (errorData.length > lastGptErrMessage.length) {
-        await naviUtils.fetchGptResults(errorData); // to debug exit errors
-      }
+      deboucedGptResults(errorData, lastGptErrMessage);
     });
   }
+}
+
+function deboucedGptResults(errorData: string, lastGptErrMessage: string) {
+  // If there's already a timer running, clear it
+  if (debounceTimer) {
+    clearTimeout(debounceTimer);
+  }
+
+  // Set a new timer to call fetchGptResults after a certain delay
+  debounceTimer = setTimeout(async () => {
+    // Only send request to chatGPT if we haven't already sent a request for the error
+    // Sending requests here enables us to debug runtime errors
+    if (errorData.length > lastGptErrMessage.length) {
+      lastGptErrMessage = errorData;
+      await naviUtils.fetchGptResults(errorData); // to debug runtime errors
+    }
+  }, 1000); // Adjust the delay as needed (e.g., 1000 milliseconds = 1 second)
 }
 
 if (options.debug) {
