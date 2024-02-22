@@ -1,11 +1,10 @@
 import fs from "fs";
-import {promises as asyncFs} from "fs";
 import path from "path";
 import readlineSync from "readline-sync";
 import OpenAI from "openai";
 import chalk from "chalk";
 
-const llm = "gpt-3.5-turbo";
+const llm = 'gpt-3.5-turbo'
 const BUFFER_LEN = 50;
 
 interface NaviUtils {
@@ -43,15 +42,6 @@ class NaviUtils {
 
   // GPT RESULTS
   public async fetchGptResults(error: string) {
-    let errorFile,
-      fileContents = "";
-    errorFile = await this.extractErrorFile(error);
-    if (errorFile) {
-      fileContents = await this.readFileContents(errorFile);
-    }
-    const gptMessageContent = `I'm getting this error when running a node app: 
-      ${error}\n\n ${fileContents && `This is the file \n\n${fileContents}`}`;
-
     const apiKey = this.getApiKey();
 
     this.openai = new OpenAI({apiKey});
@@ -59,7 +49,7 @@ class NaviUtils {
     if (this.openai && apiKey) {
       const spinner = this.startSpinner("Fetching answers from our AI overlords");
       const completion = await this.openai.chat.completions.create({
-        messages: [{role: "system", content: gptMessageContent}],
+        messages: [{role: "system", content: "I'm getting this error when running a node app: " + error}],
         model: this.llmName,
       });
       this.stopSpinner(spinner);
@@ -92,7 +82,7 @@ class NaviUtils {
     // You can use regular expressions or custom logic for advanced formatting
 
     // For demonstration, let's assume it's a simple list formatting
-    const lines = output.split("\n");
+    const lines = output.split('\n');
     const formattedLines = lines.map((line) => {
       const match = /^(\d+)\.\s+(.+)/.exec(line);
       if (match !== null) {
@@ -101,14 +91,14 @@ class NaviUtils {
         return chalk.yellow(`${number}.`) + ` ${content}`;
       } else if (/^- /.test(line)) {
         // Unnumbered list item
-        return chalk.blue("-") + ` ${line.slice(2)}`;
+        return chalk.blue('-') + ` ${line.slice(2)}`;
       } else {
         // Normal text
         return line;
       }
     });
 
-    return formattedLines.join("\n");
+    return formattedLines.join('\n');
   }
 
   // SPINNER
@@ -124,38 +114,6 @@ class NaviUtils {
   private stopSpinner(spinner: NodeJS.Timeout) {
     clearInterval(spinner);
     process.stdout.write("\r"); // Move cursor to the beginning of the line
-  }
-
-  private extractErrorFile(stackTrace: string): string | null {
-    const stackLines = stackTrace.split("\n");
-    // If the error is being thrown from a src code file return that
-    if (!stackLines[0].includes("node_modules")) {
-      return stackLines[0];
-      // Else we need to find the src code file in the stack
-    } else {
-      for (const line of stackLines) {
-        const filePathMatch = line.match(/\s+at\s+(?:Object\.)?<anonymous>\s+\(([^:]+):\d+:\d+\)/);
-
-        if (filePathMatch && filePathMatch[1]) {
-          const filePath = filePathMatch[1];
-          if (!filePath.includes("node_modules")) {
-            return filePath;
-          }
-        }
-      }
-    }
-    return null;
-  }
-
-  private async readFileContents(filePath: string): Promise<string> {
-    try {
-      // Read the contents of the file asynchronously
-      const fileContent: string = await asyncFs.readFile(filePath, "utf8");
-      return fileContent; // Return the file contents
-    } catch (err) {
-      console.error("Error reading file:", err);
-      throw err; // Rethrow the error to propagate it
-    }
   }
 }
 
