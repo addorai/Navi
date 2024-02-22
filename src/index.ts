@@ -22,6 +22,7 @@ function manualDebug(command: string[]) {
   if (cmd) {
     const childProcess: ChildProcessWithoutNullStreams = spawn(cmd, args, {shell: true});
     let errorData = "";
+    let lastGptErrMessage = "";
 
     // Listen for stdout data event
     childProcess.stdout.on("data", (data) => {
@@ -34,17 +35,21 @@ function manualDebug(command: string[]) {
     });
 
     // Listen for stderr data event
-    childProcess.stderr.on("data", (data) => {
+    childProcess.stderr.on("data", async (data) => {
       console.error(`${chalk.red(data)}`);
       errorData += data;
+      // Only send request to chatGPT if we haven't already sent a request for the error
+      // Sending requests here enables us to debug runtime errors
+      if (errorData.length > lastGptErrMessage.length) {
+        lastGptErrMessage = errorData;
+        await naviUtils.fetchGptResults(errorData); // to debug runtime errors
+      }
     });
 
     // Listen for close event
-    childProcess.on("close", (code) => {
-      if (errorData.length > 0) {
-        naviUtils.fetchGptResults(errorData);
-      } else {
-        process.exit(code || 0);
+    childProcess.on("close", async (code) => {
+      if (errorData.length > lastGptErrMessage.length) {
+        await naviUtils.fetchGptResults(errorData); // to debug exit errors
       }
     });
   }
