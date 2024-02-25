@@ -24,8 +24,7 @@ You have two options on how to get started with Navi.
 3. Get suggestions on how to upgrade deprecated packages
 
 ## Demo Video
-
-_Coming soon_
+<iframe src="https://capture.dropbox.com/embed/YwKPBg0g7w4z7imf?source=copy-embed" width="560" height="315" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Upcoming Features
 
