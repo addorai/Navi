@@ -24,7 +24,7 @@ You have two options on how to get started with Navi.
 3. Get suggestions on how to upgrade deprecated packages
 
 ## Demo Video
-[<img src="https://gcdnb.pbrd.co/images/p9Nv5PraOw2y.png?o=1" width="100%">](https://capture.dropbox.com/YwKPBg0g7w4z7imf "Navi - build & runtime AI debugging")
+[<img src="https://gcdnb.pbrd.co/images/p9Nv5PraOw2y.png?o=1" width="50%">](https://capture.dropbox.com/YwKPBg0g7w4z7imf "Navi - build & runtime AI debugging")
 
 ## Upcoming Features
 
