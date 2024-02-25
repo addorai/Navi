@@ -26,8 +26,6 @@ You have two options on how to get started with Navi.
 ## Demo Video
 [<img src="https://gcdnb.pbrd.co/images/p9Nv5PraOw2y.png?o=1" width="100%">](https://capture.dropbox.com/YwKPBg0g7w4z7imf "Navi - build & runtime AI debugging")
 
-![asdf](https://gcdnb.pbrd.co/images/p9Nv5PraOw2y.png?o=1)
-
 ## Upcoming Features
 
 - **Slack integration** -> when you run into an error, Navi will automatically suggest fixes that teammates have shared on Slack
