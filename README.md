@@ -20,7 +20,6 @@ You have two options on how to get started with Navi.
 > **Permission Denied Error**
 > This error indicates that the Navi package doesn't have permission to execute.
 > `bash: /Users/adorai/.nvm/versions/node/v16.16.0/bin/navi: Permission denied`
-
 > You can resolve by running chmod +x on that package, i.e. `chmod +x /Users/aravindhdorai/.nvm/versions/node/v16.16.0/bin/navi`
 
 ## Use Cases
