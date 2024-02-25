@@ -24,7 +24,7 @@ You have two options on how to get started with Navi.
 3. Get suggestions on how to upgrade deprecated packages
 
 ## Demo Video
-[<img src="https://previews.dropbox.com/p/thumb/ACOyqJdz1G8auG8bXGCGKydpm2NYKfTMOxJSLxkTT3C5F5E-C8jpw1rar040OAylGaB5aAE3efHnyzDkefTChxTzpwvEJH3-0565yjOMyW32sFseiR1hnZGYmxwJYr9-bfi_q45whITiSvVUk_5jnPFCqQtFj-Ox9kxFQQ5f2hjHaupOxxGB1VQdmxdRtc3ny7FNzP7tnBleQ4uhoqQ1dUo0m-5o0l2WjRithaiDQA3XAWSMfZxTZIquC4s5bV7mQuxfG3DGFUcAzwcPUjORoPKmIT3JeBlXY0aagT6mpFEQ5yvw-YqxD5GT7fB0R0sHNP520onMLgGmsNuH5E__O_lz/p.png" width="50%">](https://capture.dropbox.com/YwKPBg0g7w4z7imf "Navi - build & runtime AI debugging")
+[<img src="https://previews.dropbox.com/p/thumb/ACOyqJdz1G8auG8bXGCGKydpm2NYKfTMOxJSLxkTT3C5F5E-C8jpw1rar040OAylGaB5aAE3efHnyzDkefTChxTzpwvEJH3-0565yjOMyW32sFseiR1hnZGYmxwJYr9-bfi_q45whITiSvVUk_5jnPFCqQtFj-Ox9kxFQQ5f2hjHaupOxxGB1VQdmxdRtc3ny7FNzP7tnBleQ4uhoqQ1dUo0m-5o0l2WjRithaiDQA3XAWSMfZxTZIquC4s5bV7mQuxfG3DGFUcAzwcPUjORoPKmIT3JeBlXY0aagT6mpFEQ5yvw-YqxD5GT7fB0R0sHNP520onMLgGmsNuH5E__O_lz/p.png" width="100%">](https://capture.dropbox.com/YwKPBg0g7w4z7imf "Navi - build & runtime AI debugging")
 
 ## Upcoming Features
 
