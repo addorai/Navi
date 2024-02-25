@@ -36,7 +36,7 @@ Currently Navi support NodeJS projects and helps debug both Javascript and Types
 
 ## Demo Video
 
-[<img src="https://gcdnb.pbrd.co/images/p9Nv5PraOw2y.png?o=1" width="50%">](https://capture.dropbox.com/tQHiuGvWj7Y4kqbA "Navi - build & runtime AI debugging")
+[<img src="https://gcdnb.pbrd.co/images/p9Nv5PraOw2y.png?o=1" width="50%">](https://capture.dropbox.com/6K75tPrlG26eJqlo "Navi - build & runtime AI debugging")
 
 ## Upcoming Features
 
