@@ -20,6 +20,9 @@ function manualDebug(command: string[]) {
   const cmd = command.shift();
   const args = command;
 
+  // Get the current working directory
+  const cwd = process.cwd();
+
   // Spawn the command as a child process
   if (cmd) {
     const childProcess: ChildProcessWithoutNullStreams = spawn(cmd, args, {shell: true});
@@ -46,17 +49,17 @@ function manualDebug(command: string[]) {
         errorData += data;
       }
 
-      deboucedGptResults(errorData, lastGptErrMessage);
+      deboucedGptResults(errorData, lastGptErrMessage, cwd);
     });
 
     // Listen for close event
     childProcess.on("close", async (code) => {
-      deboucedGptResults(errorData, lastGptErrMessage);
+      deboucedGptResults(errorData, lastGptErrMessage, cwd);
     });
   }
 }
 
-function deboucedGptResults(errorData: string, lastGptErrMessage: string) {
+function deboucedGptResults(errorData: string, lastGptErrMessage: string, cwd: string) {
   // If there's already a timer running, clear it
   if (debounceTimer) {
     clearTimeout(debounceTimer);
@@ -68,7 +71,7 @@ function deboucedGptResults(errorData: string, lastGptErrMessage: string) {
     // Sending requests here enables us to debug runtime errors
     if (errorData.length > lastGptErrMessage.length) {
       lastGptErrMessage = errorData;
-      await naviUtils.fetchGptResults(errorData); // to debug runtime errors
+      await naviUtils.fetchGptResults(errorData, cwd); // to debug runtime errors
     }
   }, 1000); // Adjust the delay as needed (e.g., 1000 milliseconds = 1 second)
 }

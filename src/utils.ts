@@ -8,9 +8,18 @@ import chalk from "chalk";
 const llm = "gpt-3.5-turbo";
 const BUFFER_LEN = 50;
 
+const numRecentFiles: number = 1;
+
 interface NaviUtils {
   openai: OpenAI | null;
   llmName: string;
+}
+
+interface FileInfo {
+  name: string;
+  path: string;
+  modifiedTime: Date;
+  content: string;
 }
 
 class NaviUtils {
@@ -42,15 +51,21 @@ class NaviUtils {
   }
 
   // GPT RESULTS
-  public async fetchGptResults(error: string) {
-    let errorFile,
-      fileContents = "";
-    errorFile = await this.extractErrorFile(error);
+  public async fetchGptResults(error: string, cwd: string) {
+    const errorFile = await this.extractErrorFile(error);
+
+    let gptMessageContent = `I'm getting this error when running a node app: ${error}`;
+
     if (errorFile) {
-      fileContents = await this.readFileContents(errorFile);
+      const fileContents = await this.readFileContents(errorFile);
+      gptMessageContent += `\n\n ${fileContents && `This is the file \n\n${fileContents}`}`;
+    } else {
+      const mostRecentFiles: FileInfo[] = this.getMostRecentFiles(cwd);
+      gptMessageContent += `\n\n These are possible files where the error is thrown`;
+      mostRecentFiles.slice(0, numRecentFiles).forEach((file) => {
+        gptMessageContent += `\n\n${file.content}`;
+      });
     }
-    const gptMessageContent = `I'm getting this error when running a node app: 
-      ${error}\n\n ${fileContents && `This is the file \n\n${fileContents}`}`;
 
     const apiKey = this.getApiKey();
 
@@ -129,7 +144,7 @@ class NaviUtils {
   private extractErrorFile(stackTrace: string): string | null {
     const stackLines = stackTrace.split("\n");
     // If the error is being thrown from a src code file return that
-    if (!stackLines[0].includes("node_modules")) {
+    if (!stackLines[0].includes("node_modules") && this.isFilePath(stackLines[0])) {
       return stackLines[0];
       // Else we need to find the src code file in the stack
     } else {
@@ -138,13 +153,33 @@ class NaviUtils {
 
         if (filePathMatch && filePathMatch[1]) {
           const filePath = filePathMatch[1];
-          if (!filePath.includes("node_modules")) {
+          if (!filePath.includes("node_modules") && this.isFilePath(filePath)) {
             return filePath;
           }
         }
       }
     }
     return null;
+  }
+
+  private isFilePath(path: string): boolean {
+    // Check for common path separators
+    if (path.includes("/") || path.includes("\\")) {
+      // Check if it starts with a path separator (indicating absolute path)
+      if (path.startsWith("/") || path.startsWith("\\")) {
+        return true;
+      }
+      // Check if it contains a colon (indicating Windows absolute path like C:\)
+      else if (path.includes(":")) {
+        return true;
+      }
+      // Otherwise, it might be a relative path
+      else {
+        return true;
+      }
+    } else {
+      return false;
+    }
   }
 
   private async readFileContents(filePath: string): Promise<string> {
@@ -156,6 +191,55 @@ class NaviUtils {
       console.error("Error reading file:", err);
       return "";
     }
+  }
+
+  private getMostRecentFiles(directory: string): FileInfo[] {
+    const recentFiles: FileInfo[] = [];
+    const seenFiles: Set<string> = new Set();
+
+    // Function to recursively find the most recently modified files within a directory
+    function findRecentFiles(dir: string) {
+      const items = fs.readdirSync(dir, {withFileTypes: true});
+      for (const item of items) {
+        const itemPath = path.resolve(dir, item.name);
+        if (item.isDirectory() && item.name !== "node_modules" && item.name !== ".next") {
+          if (item.name === "src" || item.name === "app") {
+            const srcFiles = findSrcFiles(itemPath);
+            for (const file of srcFiles) {
+              if (!seenFiles.has(file.path)) {
+                recentFiles.push(file);
+                seenFiles.add(file.path);
+              }
+            }
+          } else {
+            findRecentFiles(itemPath);
+          }
+        }
+      }
+    }
+
+    // Function to find most recently modified .ts or .js files within a "src" or "app" directory
+    function findSrcFiles(srcDir: string): FileInfo[] {
+      const srcFiles: FileInfo[] = [];
+      const files = fs.readdirSync(srcDir, {withFileTypes: true});
+      for (const file of files) {
+        const filePath = path.resolve(srcDir, file.name);
+        if (file.isFile() && (file.name.endsWith(".ts") || file.name.endsWith(".js"))) {
+          const stats = fs.statSync(filePath);
+          const content = fs.readFileSync(filePath, "utf-8");
+          srcFiles.push({
+            name: file.name,
+            path: filePath,
+            modifiedTime: stats.mtime,
+            content: content,
+          });
+        }
+      }
+      return srcFiles.sort((a, b) => b.modifiedTime.getTime() - a.modifiedTime.getTime());
+    }
+
+    findRecentFiles(directory);
+    return recentFiles;
   }
 }
 
