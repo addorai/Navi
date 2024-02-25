@@ -4,21 +4,19 @@ import path from "path";
 import readlineSync from "readline-sync";
 import OpenAI from "openai";
 import chalk from "chalk";
+import {IGNORED_PATHS, RECENT_FILES_TO_READ, SUPPORTED_FILES} from "./constants";
 
 const llm = "gpt-3.5-turbo";
 const BUFFER_LEN = 50;
-
-const numRecentFiles: number = 1;
 
 interface NaviUtils {
   openai: OpenAI | null;
   llmName: string;
 }
 
-interface FileInfo {
-  name: string;
-  path: string;
-  modifiedTime: Date;
+interface FileData {
+  filePath: string;
+  modifiedTime: number;
   content: string;
 }
 
@@ -52,7 +50,7 @@ class NaviUtils {
 
   // GPT RESULTS
   public async fetchGptResults(error: string, cwd: string) {
-    const errorFile = await this.extractErrorFile(error);
+    const errorFile = await this.extractErrorFile(error); // Can we find error file in stack trace?
 
     let gptMessageContent = `I'm getting this error when running a node app: ${error}`;
 
@@ -60,9 +58,12 @@ class NaviUtils {
       const fileContents = await this.readFileContents(errorFile);
       gptMessageContent += `\n\n ${fileContents && `This is the file \n\n${fileContents}`}`;
     } else {
-      const mostRecentFiles: FileInfo[] = this.getMostRecentFiles(cwd);
+      // If we can't find error in stack trace, load the most recently modified project files
+      // Ignore files or paths inside .gitignore
+      // Only read .js and .ts files for now
+      const mostRecentFiles: FileData[] = this.getRecentlyModifiedFiles(cwd);
       gptMessageContent += `\n\n These are possible files where the error is thrown`;
-      mostRecentFiles.slice(0, numRecentFiles).forEach((file) => {
+      mostRecentFiles.forEach((file) => {
         gptMessageContent += `\n\n${file.content}`;
       });
     }
@@ -193,53 +194,57 @@ class NaviUtils {
     }
   }
 
-  private getMostRecentFiles(directory: string): FileInfo[] {
-    const recentFiles: FileInfo[] = [];
-    const seenFiles: Set<string> = new Set();
+  private getRecentlyModifiedFiles(directory: string): FileData[] {
+    let filesModified: FileData[] = [];
 
-    // Function to recursively find the most recently modified files within a directory
-    function findRecentFiles(dir: string) {
-      const items = fs.readdirSync(dir, {withFileTypes: true});
-      for (const item of items) {
-        const itemPath = path.resolve(dir, item.name);
-        if (item.isDirectory() && item.name !== "node_modules" && item.name !== ".next") {
-          if (item.name === "src" || item.name === "app") {
-            const srcFiles = findSrcFiles(itemPath);
-            for (const file of srcFiles) {
-              if (!seenFiles.has(file.path)) {
-                recentFiles.push(file);
-                seenFiles.add(file.path);
-              }
-            }
+    // Read .gitignore file and parse ignore patterns
+    const ignorePatterns: string[] = IGNORED_PATHS;
+    const gitignorePath = path.join(directory, ".gitignore");
+    if (fs.existsSync(gitignorePath)) {
+      const gitignoreContent = fs.readFileSync(gitignorePath, "utf-8");
+      gitignoreContent.split("\n").forEach((line) => {
+        line = line.trim();
+        if (line && !line.startsWith("#")) {
+          ignorePatterns.push(line);
+        }
+      });
+    }
+
+    // Function to check if a file path matches any gitignore pattern
+    function matchesIgnorePattern(filePath: string): boolean {
+      return ignorePatterns.some((pattern) => {
+        const regex = new RegExp(pattern.replace(/\*/g, ".*"));
+        return regex.test(filePath);
+      });
+    }
+
+    // Function to recursively traverse directory and its subdirectories
+    function traverseDirectory(dir: string) {
+      const files = fs.readdirSync(dir);
+      for (const file of files) {
+        const filePath = path.join(dir, file);
+        if (!matchesIgnorePattern(filePath)) {
+          const stats = fs.statSync(filePath);
+          if (stats.isDirectory()) {
+            traverseDirectory(filePath); // Recursive call for subdirectories
           } else {
-            findRecentFiles(itemPath);
+            const fileExtension = path.extname(filePath);
+            if (SUPPORTED_FILES.includes(fileExtension)) {
+              const content = fs.readFileSync(filePath, "utf-8");
+              filesModified.push({filePath, modifiedTime: stats.mtimeMs, content: content});
+            }
           }
         }
       }
     }
 
-    // Function to find most recently modified .ts or .js files within a "src" or "app" directory
-    function findSrcFiles(srcDir: string): FileInfo[] {
-      const srcFiles: FileInfo[] = [];
-      const files = fs.readdirSync(srcDir, {withFileTypes: true});
-      for (const file of files) {
-        const filePath = path.resolve(srcDir, file.name);
-        if (file.isFile() && (file.name.endsWith(".ts") || file.name.endsWith(".js"))) {
-          const stats = fs.statSync(filePath);
-          const content = fs.readFileSync(filePath, "utf-8");
-          srcFiles.push({
-            name: file.name,
-            path: filePath,
-            modifiedTime: stats.mtime,
-            content: content,
-          });
-        }
-      }
-      return srcFiles.sort((a, b) => b.modifiedTime.getTime() - a.modifiedTime.getTime());
-    }
+    traverseDirectory(directory);
 
-    findRecentFiles(directory);
-    return recentFiles;
+    // Sort files based on modification time in descending order
+    filesModified.sort((a, b) => b.modifiedTime - a.modifiedTime);
+
+    // Return specified number of recently modified files
+    return filesModified.slice(0, RECENT_FILES_TO_READ);
   }
 }
 
