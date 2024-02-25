@@ -24,6 +24,10 @@ This error indicates that the Navi package doesn't have permission to execute.
 
 You can resolve by running chmod +x on that package, i.e. `chmod +x /Users/aravindhdorai/.nvm/versions/node/v16.16.0/bin/navi`
 
+## Supported Projects
+
+Currently Navi support NodeJS projects and helps debug both Javascript and Typescript files. We'll be adding support for more projects soon.
+
 ## Use Cases
 
 1. Get suggestions on how to resolve build errors
@@ -32,7 +36,7 @@ You can resolve by running chmod +x on that package, i.e. `chmod +x /Users/aravi
 
 ## Demo Video
 
-[<img src="https://gcdnb.pbrd.co/images/p9Nv5PraOw2y.png?o=1" width="50%">](https://capture.dropbox.com/YwKPBg0g7w4z7imf "Navi - build & runtime AI debugging")
+[<img src="https://gcdnb.pbrd.co/images/p9Nv5PraOw2y.png?o=1" width="50%">](https://capture.dropbox.com/tQHiuGvWj7Y4kqbA "Navi - build & runtime AI debugging")
 
 ## Upcoming Features
 
