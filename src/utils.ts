@@ -170,8 +170,6 @@ class NaviUtils {
     // Replace the matched pattern with an empty string
     const pathWithoutLineNumber = path.replace(regex, "");
 
-    console.log(pathWithoutLineNumber);
-
     return pathWithoutLineNumber;
   }
 
