@@ -146,7 +146,7 @@ class NaviUtils {
     const stackLines = stackTrace.split("\n");
     // If the error is being thrown from a src code file return that
     if (!stackLines[0].includes("node_modules") && this.isFilePath(stackLines[0])) {
-      return stackLines[0];
+      return this.removeLineNumberFromPath(stackLines[0]);
       // Else we need to find the src code file in the stack
     } else {
       for (const line of stackLines) {
@@ -155,12 +155,24 @@ class NaviUtils {
         if (filePathMatch && filePathMatch[1]) {
           const filePath = filePathMatch[1];
           if (!filePath.includes("node_modules") && this.isFilePath(filePath)) {
-            return filePath;
+            return this.removeLineNumberFromPath(filePath);
           }
         }
       }
     }
     return null;
+  }
+
+  private removeLineNumberFromPath(path: string): string {
+    // Define a regular expression pattern to match ":<digits>" at the end of the string
+    const regex = /:\d+$/;
+
+    // Replace the matched pattern with an empty string
+    const pathWithoutLineNumber = path.replace(regex, "");
+
+    console.log(pathWithoutLineNumber);
+
+    return pathWithoutLineNumber;
   }
 
   private isFilePath(path: string): boolean {
