@@ -4,6 +4,7 @@ import NaviUtils from "./utils";
 import chalk from "chalk";
 import {Command} from "commander";
 import figlet from "figlet";
+import {ERROR_STRINGS, WARN_STRINGS} from "./constants";
 
 const naviUtils = new NaviUtils();
 const program = new Command();
@@ -31,24 +32,24 @@ function manualDebug(command: string[]) {
 
     // Listen for stdout data event
     childProcess.stdout.on("data", (data) => {
-      if (data.includes("error")) {
+      if (ERROR_STRINGS.some((errorString) => data.includes(errorString))) {
         console.error(`${chalk.red(data)}`);
         errorData += data;
       } else {
         console.log(`${data}`);
       }
+      deboucedGptResults(errorData, lastGptErrMessage, cwd);
     });
 
     // Listen for stderr data event
     childProcess.stderr.on("data", async (data) => {
       // warnings are not processed by chatGPT
-      if (data.toString().toLowerCase().includes("warn")) {
+      if (WARN_STRINGS.some((warnString) => data.includes(warnString))) {
         console.warn(`${chalk.yellow(data)}`);
       } else {
         console.error(`${chalk.red(data)}`);
         errorData += data;
       }
-
       deboucedGptResults(errorData, lastGptErrMessage, cwd);
     });
 
