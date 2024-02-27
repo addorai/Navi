@@ -17,18 +17,22 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/analytics-node": "^3.1.14",
+    "analytics-node": "^6.2.0",
     "chalk": "^4.1.2",
     "commander": "^12.0.0",
     "figlet": "^1.7.0",
     "openai": "^4.28.0",
     "readline-sync": "^1.4.10",
-    "semver": "^7.6.0"
+    "semver": "^7.6.0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/figlet": "^1.5.8",
     "@types/node": "^20.11.19",
     "@types/readline-sync": "^1.4.8",
     "@types/semver": "^7.5.8",
+    "@types/uuid": "^9.0.8",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }

@@ -5,6 +5,9 @@ import readlineSync from "readline-sync";
 import OpenAI from "openai";
 import chalk from "chalk";
 import {IGNORED_PATHS, RECENT_FILES_TO_READ, SUPPORTED_FILES} from "./constants";
+import NaviAnalytics from "./analytics";
+
+const naviAnalytics = new NaviAnalytics();
 
 const llm = "gpt-3.5-turbo";
 const BUFFER_LEN = 50;
@@ -32,6 +35,7 @@ class NaviUtils {
     if (fs.existsSync(apiKeyPath)) {
       return fs.readFileSync(apiKeyPath, "utf8").trim();
     }
+    naviAnalytics.sendAnalytics("Prompt API Key");
     return this.promptApiKey();
   }
 
@@ -43,7 +47,8 @@ class NaviUtils {
     });
 
     fs.writeFileSync(apiKeyPath, userInputApiKey.trim(), "utf8");
-    console.log("API key saved successfully to navi.txt");
+    console.log("API key saved successfully");
+    naviAnalytics.sendAnalytics("API Key Saved");
 
     return userInputApiKey.trim();
   }
@@ -73,6 +78,9 @@ class NaviUtils {
     this.openai = new OpenAI({apiKey});
 
     if (this.openai && apiKey) {
+      naviAnalytics.sendAnalytics("Debug Error", {
+        errorMessage: gptMessageContent,
+      });
       const spinner = this.startSpinner("Fetching answers from our AI overlords");
       const completion = await this.openai.chat.completions.create({
         messages: [{role: "system", content: gptMessageContent}],
