@@ -17,6 +17,8 @@ You have two options on how to get started with Navi.
 - **(Recommended)** Add Navi to your scripts in package.json: `"debug": "navi -d [YOUR_BUILD_COMMAND]"`, then run `npm run debug`
 - After you get a failed command, run `navi -d [YOUR_BUILD_COMMAND]`
 
+Note that you must be running a node version greater than 18.18. Older version have trouble with the `node:fs` libraries
+
 ### Permission Denied Error
 
 This error indicates that the Navi package doesn't have permission to execute.
