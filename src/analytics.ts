@@ -23,7 +23,6 @@ class NaviAnalytics {
 
   private async getMachineId() {
     const id = await machineId();
-    console.log("id", id);
     return id;
   }
 }

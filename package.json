@@ -25,15 +25,13 @@
     "node-machine-id": "^1.1.12",
     "openai": "^4.28.0",
     "readline-sync": "^1.4.10",
-    "semver": "^7.6.0",
-    "uuid": "^9.0.1"
+    "semver": "^7.6.0"
   },
   "devDependencies": {
     "@types/figlet": "^1.5.8",
     "@types/node": "^20.11.19",
     "@types/readline-sync": "^1.4.8",
     "@types/semver": "^7.5.8",
-    "@types/uuid": "^9.0.8",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }
