@@ -5,7 +5,9 @@ import chalk from "chalk";
 import {Command} from "commander";
 import figlet from "figlet";
 import {ERROR_STRINGS, WARN_STRINGS} from "./constants";
+import NaviAnalytics from "./analytics";
 
+const naviAnalytics = new NaviAnalytics();
 const naviUtils = new NaviUtils();
 const program = new Command();
 console.log(figlet.textSync("Navi"));
@@ -15,6 +17,8 @@ program.version("1.0.0").description("A CLI tool that uses AI to debug terminal 
 const options = program.opts();
 
 let debounceTimer: NodeJS.Timeout | null = null;
+
+naviAnalytics.sendPageView("CLI Intro");
 
 function manualDebug(command: string[]) {
   // Split the command and its arguments into an array
