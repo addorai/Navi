@@ -69,7 +69,7 @@ Navi currently supports Node.js projects, providing assistance in debugging both
 
 [<img src="https://gcdnb.pbrd.co/images/p9Nv5PraOw2y.png?o=1" width="50%">](https://www.dropbox.com/s/qpt2kaeijqfv4po/Navi%20-%20AI%20debugger%20in%20terminal.mp4?dl=0 "Navi - build & runtime AI debugging")
 
-Feel free to reach open issues on our [Github repo](https://github.com/addorai/Navi) if you have any questions
-or encounter issues.
+Feel free to open issues on our [Github repo](https://github.com/addorai/Navi) if you have any questions
+or encounter problems.
 
 Happy debugging with Navi!
