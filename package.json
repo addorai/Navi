@@ -1,0 +1,47 @@
+{
+  "name": "@navi-dev/navi",
+  "version": "1.0.3",
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "description": "AI Debugger in Terminal",
+  "main": "dist/entry.js",
+  "bin": {
+    "navi": "./dist/entry.js"
+  },
+  "scripts": {
+    "build": "npx tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cli",
+    "npmtool",
+    "debugger",
+    "ai",
+    "chatgpt",
+    "openai"
+  ],
+  "author": "Aravindh Dorai",
+  "repository": "https://github.com/addorai/Navi",
+  "homepage": "https://github.com/addorai/Navi#readme",
+  "license": "ISC",
+  "dependencies": {
+    "@types/analytics-node": "^3.1.14",
+    "analytics-node": "^6.2.0",
+    "chalk": "^4.1.2",
+    "commander": "^12.0.0",
+    "figlet": "^1.7.0",
+    "node-machine-id": "^1.1.12",
+    "openai": "^4.28.0",
+    "readline-sync": "^1.4.10",
+    "semver": "^7.6.0"
+  },
+  "devDependencies": {
+    "@types/figlet": "^1.5.8",
+    "@types/node": "^20.11.19",
+    "@types/readline-sync": "^1.4.8",
+    "@types/semver": "^7.5.8",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
