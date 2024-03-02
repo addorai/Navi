@@ -21,6 +21,14 @@ class NaviAnalytics {
     analytics.track(analyticsData);
   }
 
+  public async sendPageView(page: string) {
+    analytics.page({
+      userId: await this.getMachineId(),
+      category: "CLI",
+      name: page,
+    });
+  }
+
   private async getMachineId() {
     const id = await machineId();
     return id;
