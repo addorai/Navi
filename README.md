@@ -11,7 +11,7 @@ To use Navi, an OpenAI API key is required.
 1. Install Navi globally:
 
 ```bash
-npm install -g @navi-dev/navi
+npm install -g navi-cli
 ```
 
 2. Ensure Navi is running:
