@@ -1,10 +1,10 @@
 {
-  "name": "@navi-dev/navi",
+  "name": "navi-cli",
   "version": "1.0.6",
   "engines": {
     "node": ">=18.18.0"
   },
-  "description": "AI Debugger in Terminal",
+  "description": "AI debugger in Terminal",
   "main": "dist/entry.js",
   "bin": {
     "navi": "./dist/entry.js"
